@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 app = Flask(__name__)
 app.secret_key = 'key'
 
+
 class Jogo:
     def __init__(self, nome, categoria, console):
         self.nome = nome
@@ -24,6 +25,8 @@ def inicio():
 
 @app.route('/novo')
 def novo():
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        return redirect('/login?proxima=novo')
     return render_template('novo.html', titulo='Novo jogo')
 
 
@@ -36,7 +39,7 @@ def criar():
     jogo = Jogo(nome, categoria, console)
     lista_jogos.append(jogo)
 
-    return redirect('/inicio')
+    return redirect('/')
 
 
 @app.route('/autenticar', methods=['POST', ])
@@ -46,7 +49,12 @@ def autenticar():
     if 'alohomora' == senha and 'root' == usuario:
         session['usuario_logado'] = usuario
         flash(f'Usuario {usuario} logado com sucesso!')
-        return redirect('/inicio')
+        proxima_pagina = request.form['proxima']
+        print(proxima_pagina)
+        if proxima_pagina == 'novo':
+            return redirect('/novo')
+        else:
+            return redirect('/inicio')
     else:
         flash(f'Usuario {usuario} não existe ou a senha está incorreta!')
         return redirect('/login')
@@ -56,11 +64,13 @@ def autenticar():
 def loggout():
     session['usuario_logado'] = None
     flash('Loggout efetuado com sucesso!')
-    return redirect('/inicial')
+    return redirect('/inicio')
+
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    proxima = request.args.get('proxima')
+    return render_template('login.html', proxima=proxima)
 
 
 app.run(debug=True)
