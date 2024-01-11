@@ -50,7 +50,6 @@ def autenticar():
         session['usuario_logado'] = usuario
         flash(f'Usuario {usuario} logado com sucesso!')
         proxima_pagina = request.form['proxima']
-        print(proxima_pagina)
         if proxima_pagina == 'novo':
             return redirect('/novo')
         else:
