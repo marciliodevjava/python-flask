@@ -10,7 +10,7 @@ class Jogo:
         self.console = console
 
 
-jogo_um = Jogo('Tetris', 'Puzzle', 'Ataru')
+jogo_um = Jogo('Tetris', 'Puzzle', 'Atari')
 jogo_dois = Jogo('God Of War', 'Rack in Slash', 'PS2')
 jogo_tres = Jogo('Mortal Kombat', 'Luta', 'PS2')
 
@@ -37,6 +37,20 @@ def criar():
     lista_jogos.append(jogo)
 
     return redirect('/inicio')
+
+
+@app.route('/autenticar', methods=['POST', ])
+def autenticar():
+    usuario = request.form['usuario']
+    senha = request.form['senha']
+    if 'alohomora' == senha and 'root' == usuario:
+        return redirect('/inicio')
+
+    return redirect('/login')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
 
 
 app.run(debug=True)
