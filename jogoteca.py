@@ -61,6 +61,7 @@ def criar():
 
 @app.route('/autenticar', methods=['POST', ])
 def autenticar():
+    solicitacao = request.form['usuario']
     if request.form['usuario'] in usuario_list:
         usua = usuario_list[request.form['usuario']]
         if request.form['senha'] == usua.senha:
@@ -72,7 +73,7 @@ def autenticar():
             else:
                 return redirect(url_for('index'))
     else:
-        flash(f'Usuario {usuario} não existe ou a senha está incorreta!')
+        flash(f'Usuario {solicitacao} não existe ou a senha está incorreta!')
         return redirect(url_for('login'))
 
 
