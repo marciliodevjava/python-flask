@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for
+
 app = Flask(__name__)
 app.secret_key = 'key'
 
@@ -9,6 +10,23 @@ class Jogo:
         self.categoria = categoria
         self.console = console
 
+
+class Usuario:
+    def __init__(self, nome, senha, nickname):
+        self.nome = nome
+        self.senha = senha
+        self.nickname = nickname
+
+
+usuario = Usuario('marcilio', '123456', 'marcilio')
+usuario1 = Usuario('Pedro', '12345', 'pedro')
+usuario2 = Usuario('Jose', '1234', 'jose')
+usuario3 = Usuario('João', '123', 'joao')
+
+usuario_list = {usuario.nickname: usuario,
+                usuario1.nickname: usuario1,
+                usuario2.nickname: usuario2,
+                usuario3.nickname: usuario3}
 
 jogo_um = Jogo('Tetris', 'Puzzle', 'Atari')
 jogo_dois = Jogo('God Of War', 'Rack in Slash', 'PS2')
@@ -43,16 +61,16 @@ def criar():
 
 @app.route('/autenticar', methods=['POST', ])
 def autenticar():
-    usuario = request.form['usuario']
-    senha = request.form['senha']
-    if 'alohomora' == senha and 'root' == usuario:
-        session['usuario_logado'] = usuario
-        flash(f'Usuario {usuario} logado com sucesso!')
-        proxima_pagina = request.form['proxima']
-        if proxima_pagina == 'novo':
-            return redirect(url_for('novo'))
-        else:
-            return redirect(url_for('index'))
+    if request.form['usuario'] in usuario_list:
+        usua = usuario_list[request.form['usuario']]
+        if request.form['senha'] == usua.senha:
+            session['usuario_logado'] = usua.nickname
+            flash(f'Usuario {usua.nickname} logado com sucesso!')
+            proxima_pagina = request.form['proxima']
+            if proxima_pagina == 'novo':
+                return redirect(url_for('novo'))
+            else:
+                return redirect(url_for('index'))
     else:
         flash(f'Usuario {usuario} não existe ou a senha está incorreta!')
         return redirect(url_for('login'))
